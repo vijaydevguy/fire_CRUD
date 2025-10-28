@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { getImageUrl } from "../service/cloudinary";
 
 const ProdForm = ({ close, isEdit, product, adding, editing, loading }) => {
   const [prodName, setProdName] = useState("");
@@ -6,6 +7,18 @@ const ProdForm = ({ close, isEdit, product, adding, editing, loading }) => {
   const [imgUrl, setImgUrl] = useState("");
   const [active, setActive] = useState(false);
   const [file, setFile] = useState(null);
+
+  const [uploading, setUploading] = useState(false);
+
+  const handleFile = async (e) => {
+    setUploading(true);
+    const value = e.target.files[0];
+    setFile(value);
+
+    const url = await getImageUrl(value);
+    if (url) setImgUrl(url);
+    setUploading(false);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -126,6 +139,11 @@ const ProdForm = ({ close, isEdit, product, adding, editing, loading }) => {
                   placeholder="Enter product image url"
                   required
                 />
+              </div>
+
+              <div>
+                {uploading && <h2>uploading...</h2>}
+                <input type="file" onChange={(e) => handleFile(e)} />
               </div>
 
               <div className="modal-footer">
